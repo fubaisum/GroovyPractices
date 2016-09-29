@@ -15,22 +15,21 @@
  */
 package com.fubai.groovy.practice
 
-import static org.junit.Assert.*
-import static org.mockito.Matchers.*
-import static org.mockito.Mockito.*
-
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-
 import rx.Notification
 import rx.Observable
+import rx.Observable.OnSubscribe
 import rx.Observer
 import rx.Subscriber
-import rx.Subscription
-import rx.Observable.OnSubscribe
-import rx.subscriptions.Subscriptions
+
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.fail
+import static org.mockito.Matchers.any
+import static org.mockito.Mockito.times
+import static org.mockito.Mockito.verify
 
 def class ObservableTests {
 
@@ -448,9 +447,9 @@ def class ObservableTests {
         assertEquals(expected, actual);
     }
 
-    def class AsyncObservable implements OnSubscribe {
+    def class AsyncObservable implements OnSubscribe<Integer> {
 
-        public void call(final Subscriber<Integer> observer) {
+        public void call(final Subscriber<? super Integer> observer) {
             new Thread(new Runnable() {
                 public void run() {
                     try {
@@ -465,6 +464,7 @@ def class ObservableTests {
                 }
             }).start();
         }
+
     }
 
     def class TestFactory {
@@ -496,9 +496,10 @@ def class ObservableTests {
             this.count = count;
         }
 
-        public void call(Subscriber<String> observer) {
+        public void call(Subscriber<? super String> observer) {
             observer.onNext("hello_" + count);
             observer.onCompleted();
         }
+
     }
 }
