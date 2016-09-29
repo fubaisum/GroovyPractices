@@ -4,7 +4,7 @@ version '1.0-SNAPSHOT'
 apply plugin: 'groovy'
 apply plugin: 'java'
 
-sourceCompatibility = 1.5
+sourceCompatibility = 1.7
 
 repositories {
     mavenCentral()
@@ -15,6 +15,6 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile 'org.codehaus.groovy:groovy-all:2.4.7'
     compile 'io.reactivex:rxjava:1.2.0'
-    compile 'io.reactivex:rxgroovy:1.0.3'
+//    compile 'io.reactivex:rxgroovy:1.0.3'//Is it necessary?
     compile 'org.mariadb.jdbc:mariadb-java-client:1.5.2'
 }

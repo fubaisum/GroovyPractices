@@ -7,4 +7,13 @@ import rx.Observable
  */
 Observable.just(1, 2, 3, 4, 5, 6)
         .map() { a -> "s + " + a }
-        .subscribe() {println it }
+        .flatMap() { Observable.just("+_+ " + it) }
+        .subscribe() { println it }
+
+Observable<String> observable = Observable.create() { subscriber ->
+    subscriber.onNext("haha")
+    subscriber.onCompleted()
+}
+observable.subscribe() {
+    println it
+}
