@@ -46,13 +46,13 @@ def class ObservableTests {
 
     @Test
     public void testCreate() {
-        Observable.create({it.onNext('hello');it.onCompleted();}).subscribe({ result -> a.received(result)});
+        Observable.create({ it.onNext('hello'); it.onCompleted(); }).subscribe({ result -> a.received(result) });
         verify(a, times(1)).received("hello");
     }
 
     @Test
     public void testFilter() {
-        Observable.from(1, 2, 3).filter({it >= 2}).subscribe({ result -> a.received(result)});
+        Observable.from(1, 2, 3).filter({ it >= 2 }).subscribe({ result -> a.received(result) });
         verify(a, times(0)).received(1);
         verify(a, times(1)).received(2);
         verify(a, times(1)).received(3);
@@ -65,18 +65,18 @@ def class ObservableTests {
 
     @Test
     public void testLastWithPredicate() {
-        assertEquals("two", Observable.from("one", "two", "three").toBlocking().last({ x -> x.length() == 3}))
+        assertEquals("two", Observable.from("one", "two", "three").toBlocking().last({ x -> x.length() == 3 }))
     }
 
     @Test
     public void testMap1() {
-        Observable.from(1).map({v -> 'hello_' + v}).subscribe({ result -> a.received(result)});
+        Observable.from(1).map({ v -> 'hello_' + v }).subscribe({ result -> a.received(result) });
         verify(a, times(1)).received("hello_1");
     }
 
     @Test
     public void testMap2() {
-        Observable.from(1, 2, 3).map({'hello_' + it}).subscribe({ result -> a.received(result)});
+        Observable.from(1, 2, 3).map({ 'hello_' + it }).subscribe({ result -> a.received(result) });
         verify(a, times(1)).received("hello_" + 1);
         verify(a, times(1)).received("hello_" + 2);
         verify(a, times(1)).received("hello_" + 3);
@@ -84,7 +84,7 @@ def class ObservableTests {
 
     @Test
     public void testMaterialize() {
-        Observable.from(1, 2, 3).materialize().subscribe({ result -> a.received(result)});
+        Observable.from(1, 2, 3).materialize().subscribe({ result -> a.received(result) });
         // we expect 4 onNext calls: 3 for 1, 2, 3 ObservableNotification.OnNext and 1 for ObservableNotification.OnCompleted
         verify(a, times(4)).received(any(Notification.class));
         verify(a, times(0)).error(any(Exception.class));
@@ -95,11 +95,11 @@ def class ObservableTests {
         Observable.merge(
                 Observable.from(1, 2, 3),
                 Observable.merge(
-                Observable.from(6),
-                Observable.error(new NullPointerException()),
-                Observable.from(7)),
+                        Observable.from(6),
+                        Observable.error(new NullPointerException()),
+                        Observable.from(7)),
                 Observable.from(4, 5))
-                .subscribe({ result -> a.received(result)}, { exception -> a.error(exception)});
+                .subscribe({ result -> a.received(result) }, { exception -> a.error(exception) });
 
         // executing synchronously so we can deterministically know what order things will come
         verify(a, times(1)).received(1);
@@ -114,7 +114,7 @@ def class ObservableTests {
 
     @Test
     public void testScriptWithMaterialize() {
-        new TestFactory().getObservable().materialize().subscribe({ result -> a.received(result)});
+        new TestFactory().getObservable().materialize().subscribe({ result -> a.received(result) });
         // 2 times: once for hello_1 and once for onCompleted
         verify(a, times(2)).received(any(Notification.class));
     }
@@ -122,7 +122,7 @@ def class ObservableTests {
     @Test
     public void testScriptWithMerge() {
         TestFactory f = new TestFactory();
-        Observable.merge(f.getObservable(), f.getObservable()).subscribe({ result -> a.received(result)});
+        Observable.merge(f.getObservable(), f.getObservable()).subscribe({ result -> a.received(result) });
         verify(a, times(1)).received("hello_1");
         verify(a, times(1)).received("hello_2");
     }
@@ -132,14 +132,14 @@ def class ObservableTests {
         def list = [1, 2, 3, 4, 5]
         assertEquals(5, Observable.from(list).count().toBlocking().single());
     }
-    
+
     @Test
     public void testFromWithObjects() {
         def list = [1, 2, 3, 4, 5]
         // this should now treat these as 2 objects so have a count of 2
         assertEquals(2, Observable.from(list, 6).count().toBlocking().single());
     }
-    
+
     /**
      * Check that two different single arg methods are selected correctly
      */
@@ -150,16 +150,16 @@ def class ObservableTests {
         assertEquals(6, Observable.from(list).startWith(0).count().toBlocking().single());
         assertEquals(10, Observable.from(list).startWith(startList).count().toBlocking().single());
     }
-    
+
     @Test
     public void testScriptWithOnNext() {
-        new TestFactory().getObservable().subscribe({ result -> a.received(result)});
+        new TestFactory().getObservable().subscribe({ result -> a.received(result) });
         verify(a).received("hello_1");
     }
 
     @Test
     public void testSkipTake() {
-        Observable.from(1, 2, 3).skip(1).take(1).subscribe({ result -> a.received(result)});
+        Observable.from(1, 2, 3).skip(1).take(1).subscribe({ result -> a.received(result) });
         verify(a, times(0)).received(1);
         verify(a, times(1)).received(2);
         verify(a, times(0)).received(3);
@@ -167,7 +167,7 @@ def class ObservableTests {
 
     @Test
     public void testSkip() {
-        Observable.from(1, 2, 3).skip(2).subscribe({ result -> a.received(result)});
+        Observable.from(1, 2, 3).skip(2).subscribe({ result -> a.received(result) });
         verify(a, times(0)).received(1);
         verify(a, times(0)).received(2);
         verify(a, times(1)).received(3);
@@ -175,21 +175,21 @@ def class ObservableTests {
 
     @Test
     public void testTake() {
-        Observable.from(1, 2, 3).take(2).subscribe({ result -> a.received(result)});
+        Observable.from(1, 2, 3).take(2).subscribe({ result -> a.received(result) });
         verify(a, times(1)).received(1);
         verify(a, times(1)).received(2);
         verify(a, times(0)).received(3);
     }
 
     @Test
-    public void testTakeLast() {   
-        new TestFactory().getObservable().takeLast(1).subscribe({ result -> a.received(result)});
+    public void testTakeLast() {
+        new TestFactory().getObservable().takeLast(1).subscribe({ result -> a.received(result) });
         verify(a, times(1)).received("hello_1");
     }
 
     @Test
     public void testTakeWhileViaGroovy() {
-        Observable.from(1, 2, 3).takeWhile( { x -> x < 3}).subscribe({ result -> a.received(result)});
+        Observable.from(1, 2, 3).takeWhile({ x -> x < 3 }).subscribe({ result -> a.received(result) });
         verify(a, times(1)).received(1);
         verify(a, times(1)).received(2);
         verify(a, times(0)).received(3);
@@ -197,19 +197,19 @@ def class ObservableTests {
 
     @Test
     public void testToSortedList() {
-        new TestFactory().getNumbers().toSortedList().subscribe({ result -> a.received(result)});
+        new TestFactory().getNumbers().toSortedList().subscribe({ result -> a.received(result) });
         verify(a, times(1)).received(Arrays.asList(1, 2, 3, 4, 5));
     }
 
     @Test
     public void testToSortedListWithFunction() {
-        new TestFactory().getNumbers().toSortedList({a, b -> a - b}).subscribe({ result -> a.received(result)});
+        new TestFactory().getNumbers().toSortedList({ a, b -> a - b }).subscribe({ result -> a.received(result) });
         verify(a, times(1)).received(Arrays.asList(1, 2, 3, 4, 5));
     }
 
     @Test
     public void testForEach() {
-        Observable.create(new AsyncObservable()).toBlocking().forEach({ result -> a.received(result)});
+        Observable.create(new AsyncObservable()).toBlocking().forEach({ result -> a.received(result) });
         verify(a, times(1)).received(1);
         verify(a, times(1)).received(2);
         verify(a, times(1)).received(3);
@@ -218,39 +218,39 @@ def class ObservableTests {
     @Test
     public void testForEachWithError() {
         try {
-            Observable.create(new AsyncObservable()).toBlocking().forEach({ result -> throw new RuntimeException('err')});
+            Observable.create(new AsyncObservable()).toBlocking().forEach({ result -> throw new RuntimeException('err') });
             fail("we expect an exception to be thrown");
-        }catch(Exception e) {
+        } catch (Exception e) {
             // do nothing as we expect this
         }
     }
 
     @Test
     public void testLastOrDefault() {
-        def val = Observable.from("one", "two").toBlocking().lastOrDefault("default", { x -> x.length() == 3})
+        def val = Observable.from("one", "two").toBlocking().lastOrDefault("default", { x -> x.length() == 3 })
         assertEquals("two", val)
     }
 
     @Test
     public void testLastOrDefault2() {
-        def val = Observable.from("one", "two").toBlocking().lastOrDefault("default", { x -> x.length() > 3})
+        def val = Observable.from("one", "two").toBlocking().lastOrDefault("default", { x -> x.length() > 3 })
         assertEquals("default", val)
     }
-    
+
     public void testSingle1() {
-        def s = Observable.from("one").toBlocking().single({ x -> x.length() == 3})
+        def s = Observable.from("one").toBlocking().single({ x -> x.length() == 3 })
         assertEquals("one", s)
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testSingle2() {
-        Observable.from("one", "two").toBlocking().single({ x -> x.length() == 3})
+        Observable.from("one", "two").toBlocking().single({ x -> x.length() == 3 })
     }
 
     @Test
     public void testDefer() {
         def obs = Observable.from(1, 2)
-        Observable.defer({-> obs }).subscribe({ result -> a.received(result)})
+        Observable.defer({ -> obs }).subscribe({ result -> a.received(result) })
         verify(a, times(1)).received(1);
         verify(a, times(1)).received(2);
 
@@ -261,189 +261,190 @@ def class ObservableTests {
         Observable.from(1, 2, 3).all({ x -> x > 0 }).subscribe({ result -> a.received(result) });
         verify(a, times(1)).received(true);
     }
-    
-    
+
+
     @Test
     public void testZip() {
         Observable o1 = Observable.from(1, 2, 3);
         Observable o2 = Observable.from(4, 5, 6);
         Observable o3 = Observable.from(7, 8, 9);
-        
-        List values = Observable.zip(o1, o2, o3, {a, b, c -> [a, b, c] }).toList().toBlocking().single();
+
+        List values = Observable.zip(o1, o2, o3, { a, b, c -> [a, b, c] }).toList().toBlocking().single();
         assertEquals([1, 4, 7], values.get(0));
         assertEquals([2, 5, 8], values.get(1));
         assertEquals([3, 6, 9], values.get(2));
     }
-    
+
     @Test
     public void testZipWithIterable() {
         Observable o1 = Observable.from(1, 2, 3);
         Observable o2 = Observable.from(4, 5, 6);
         Observable o3 = Observable.from(7, 8, 9);
-        
-        List values = Observable.zip([o1, o2, o3], {a, b, c -> [a, b, c] }).toList().toBlocking().single();
+
+        List values = Observable.zip([o1, o2, o3], { it as List }).toList().toBlocking().single();
         assertEquals([1, 4, 7], values.get(0));
         assertEquals([2, 5, 8], values.get(1));
         assertEquals([3, 6, 9], values.get(2));
     }
-    
+
     @Test
     public void testGroupBy() {
-        int count=0;
-        
+        int count = 0;
+
         Observable.from("one", "two", "three", "four", "five", "six")
-        .groupBy({String s -> s.length()})
-        .flatMap({
+                .groupBy({ String s -> s.length() })
+                .flatMap({
             groupObservable ->
-            
-            return groupObservable.map({
-                s ->
-                return "Value: " + s + " Group: " + groupObservable.getKey(); 
-            });
-          }).toBlocking().forEach({
+
+                return groupObservable.map({
+                    s ->
+                        return "Value: " + s + " Group: " + groupObservable.getKey();
+                });
+        }).toBlocking().forEach({
             s ->
-            println(s);
-            count++;
-          })
-          
-          assertEquals(6, count);
+                println(s);
+                count++;
+        })
+
+        assertEquals(6, count);
     }
-    
+
     @Test
     public void testToMap1() {
         Map actual = new HashMap();
-        
+
         Observable.from("a", "bb", "ccc", "dddd")
-        .toMap({String s -> s.length()})
-        .toBlocking()
-        .forEach({s -> actual.putAll(s); });
-        
+                .toMap({ String s -> s.length() })
+                .toBlocking()
+                .forEach({ s -> actual.putAll(s); });
+
         Map expected = new HashMap();
         expected.put(1, "a");
         expected.put(2, "bb");
         expected.put(3, "ccc");
         expected.put(4, "dddd");
-        
+
         assertEquals(expected, actual);
     }
 
     @Test
     public void testToMap2() {
         Map actual = new HashMap();
-        
+
         Observable.from("a", "bb", "ccc", "dddd")
-        .toMap({String s -> s.length()}, {String s -> s + s})
-        .toBlocking()
-        .forEach({s -> actual.putAll(s); });
-        
+                .toMap({ String s -> s.length() }, { String s -> s + s })
+                .toBlocking()
+                .forEach({ s -> actual.putAll(s); });
+
         Map expected = new HashMap();
         expected.put(1, "aa");
         expected.put(2, "bbbb");
         expected.put(3, "cccccc");
         expected.put(4, "dddddddd");
-        
+
         assertEquals(expected, actual);
     }
 
     @Test
     public void testToMap3() {
         Map actual = new HashMap();
-        
+
         LinkedHashMap last3 = new LinkedHashMap() {
             public boolean removeEldestEntry(Map.Entry e) {
                 return size() > 3;
             }
         };
-        
+
         Observable.from("a", "bb", "ccc", "dddd")
-        .toMap({String s -> s.length()}, {String s -> s + s}, { last3 })
-        .toBlocking()
-        .forEach({s -> actual.putAll(s); });
-        
+                .toMap({ String s -> s.length() }, { String s -> s + s }, { last3 })
+                .toBlocking()
+                .forEach({ s -> actual.putAll(s); });
+
         Map expected = new HashMap();
         expected.put(2, "bbbb");
         expected.put(3, "cccccc");
         expected.put(4, "dddddddd");
-        
+
         assertEquals(expected, actual);
     }
+
     @Test
     public void testToMultimap1() {
         Map actual = new HashMap();
-        
+
         Observable.from("a", "b", "cc", "dd")
-        .toMultimap({String s -> s.length()})
-        .toBlocking()
-        .forEach({s -> actual.putAll(s); });
-        
+                .toMultimap({ String s -> s.length() })
+                .toBlocking()
+                .forEach({ s -> actual.putAll(s); });
+
         Map expected = new HashMap();
-        
+
         expected.put(1, Arrays.asList("a", "b"));
         expected.put(2, Arrays.asList("cc", "dd"));
-        
+
         assertEquals(expected, actual);
     }
 
     @Test
     public void testToMultimap2() {
         Map actual = new HashMap();
-        
+
         Observable.from("a", "b", "cc", "dd")
-        .toMultimap({String s -> s.length()}, {String s -> s + s})
-        .toBlocking()
-        .forEach({s -> actual.putAll(s); });
-        
+                .toMultimap({ String s -> s.length() }, { String s -> s + s })
+                .toBlocking()
+                .forEach({ s -> actual.putAll(s); });
+
         Map expected = new HashMap();
-        
+
         expected.put(1, Arrays.asList("aa", "bb"));
         expected.put(2, Arrays.asList("cccc", "dddd"));
-        
+
         assertEquals(expected, actual);
     }
 
     @Test
     public void testToMultimap3() {
         Map actual = new HashMap();
-        
+
         LinkedHashMap last1 = new LinkedHashMap() {
             public boolean removeEldestEntry(Map.Entry e) {
                 return size() > 1;
             }
         };
-        
+
         Observable.from("a", "b", "cc", "dd")
-        .toMultimap({String s -> s.length()}, {String s -> s + s}, { last1 })
-        .toBlocking()
-        .forEach({s -> actual.putAll(s); });
-        
+                .toMultimap({ String s -> s.length() }, { String s -> s + s }, { last1 })
+                .toBlocking()
+                .forEach({ s -> actual.putAll(s); });
+
         Map expected = new HashMap();
-        
+
         expected.put(2, Arrays.asList("cccc", "dddd"));
-        
+
         assertEquals(expected, actual);
     }
 
     @Test
     public void testToMultimap4() {
         Map actual = new HashMap();
-        
+
         LinkedHashMap last1 = new LinkedHashMap() {
             public boolean removeEldestEntry(Map.Entry e) {
                 return size() > 2;
             }
         };
-        
+
         Observable.from("a", "b", "cc", "dd", "eee", "eee")
-        .toMultimap({String s -> s.length()}, {String s -> s + s}, { last1 }, 
-            {i -> i == 2 ? new ArrayList() : new HashSet() })
-        .toBlocking()
-        .forEach({s -> actual.putAll(s); });
-        
+                .toMultimap({ String s -> s.length() }, { String s -> s + s }, { last1 },
+                { i -> i == 2 ? new ArrayList() : new HashSet() })
+                .toBlocking()
+                .forEach({ s -> actual.putAll(s); });
+
         Map expected = new HashMap();
-        
+
         expected.put(2, Arrays.asList("cccc", "dddd"));
         expected.put(3, new HashSet(Arrays.asList("eeeeee")));
-        
+
         assertEquals(expected, actual);
     }
 
@@ -454,7 +455,7 @@ def class ObservableTests {
                 public void run() {
                     try {
                         Thread.sleep(50)
-                    }catch(Exception e) {
+                    } catch (Exception e) {
                         // ignore
                     }
                     observer.onNext(1);
@@ -477,7 +478,7 @@ def class ObservableTests {
         public TestOnSubscribe getOnSubscribe() {
             return new TestOnSubscribe(counter++);
         }
-        
+
         public Observable getObservable() {
             return Observable.create(getOnSubscribe());
         }
