@@ -16,5 +16,13 @@ public class UseAGroovyClass {
         });
 
         System.out.println("Received: " + result);
+
+        Object closureResult = instance.passToClosure(2, new Object() {
+            public String call(int value) {
+                return "You called from Groovy with value " + value;
+            }
+        });
+        System.out.println("Received: " + closureResult);
+
     }
 }

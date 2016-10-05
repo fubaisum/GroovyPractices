@@ -11,5 +11,6 @@ class AGroovyClass{
 
     def passToClosure(int value, closure) {
         println "Simply passing $value to the given closure"
+        closure(value)
     }
 }
