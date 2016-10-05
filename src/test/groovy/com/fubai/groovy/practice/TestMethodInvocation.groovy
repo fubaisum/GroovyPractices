@@ -1,9 +1,10 @@
-package com.fubaisum.groovy.practice.mop
+package com.fubai.groovy.practice
 
 /**
  * Created by sum on 10/5/16.
  */
 class TestMethodInvocation extends GroovyTestCase{
+
     void testInterceptedMethodCallonPOJO(){
         def val= new Integer(3)
         Integer.metaClass.toString={-> 'intercepted'}
